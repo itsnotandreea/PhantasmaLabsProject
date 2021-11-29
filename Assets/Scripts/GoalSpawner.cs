@@ -1,18 +1,21 @@
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GoalSpawner : MonoBehaviour
 {
+    public bool HasGoals => InstantiatedGoals.Count > 0;
+
+    public List<Transform> InstantiatedGoals => _instantiatedGoals;
+    
     [SerializeField] private GameObject _goalPrefab = null;
     [SerializeField] private Transform _goalsHolder = null;
     [SerializeField] private Vector2Int _randomGoalsToSpawn = new Vector2Int(5, 10);
     [SerializeField] private Vector2 _goalSpawningDimensions = new Vector2(10, 10);
 
-    private void Start()
-    {
-        SpawnRandomNumberOfGoals();
-    }
+    private List<Transform> _instantiatedGoals = new List<Transform>();
 
-    private void SpawnRandomNumberOfGoals()
+    public void SpawnRandomNumberOfGoals()
     {
         var goalsToSpawn = Random.Range(_randomGoalsToSpawn.x, _randomGoalsToSpawn.y);
 
@@ -26,6 +29,16 @@ public class GoalSpawner : MonoBehaviour
     {
         var newGoal = Instantiate(_goalPrefab, _goalsHolder);
         newGoal.transform.position = GetRandomPosition();
+
+        _instantiatedGoals.Add(newGoal.transform);
+    }
+
+    public void DestroyGoal(Transform goalTransform)
+    {
+        if (_instantiatedGoals.Contains(goalTransform))
+            _instantiatedGoals.Remove(goalTransform);
+        
+        Destroy(goalTransform.gameObject);
     }
 
     private Vector3 GetRandomPosition()

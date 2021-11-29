@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -5,12 +6,20 @@ using Unity.MLAgents.Sensors;
 
 public class MoveToGoalAgent : Agent
 {
-    [SerializeField] private Transform _targetTransform = null;
     [SerializeField] private float _moveSpeed = 5.0f;
+    [SerializeField] private GoalSpawner _goalSpawner = null;
+    [SerializeField] private MeshRenderer _floorMeshRenderer = null;
+    [SerializeField] private Material _redMaterial = null;
+    [SerializeField] private Material _greenMaterial = null;
+
+    private Transform _targetTransform;
     
     public override void OnEpisodeBegin()
     {
-        transform.localPosition = Vector3.zero;
+        if (!_goalSpawner.HasGoals)
+            _goalSpawner.SpawnRandomNumberOfGoals();
+        
+        _targetTransform = GetClosestTransform(_goalSpawner.InstantiatedGoals);
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -36,18 +45,48 @@ public class MoveToGoalAgent : Agent
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Tag tag))
+        switch (other.tag)
         {
-            if (tag.Type == Tag.TagType.Goal)
-            {
+            case TagsNames.GoalTagName:
+                _floorMeshRenderer.material = _greenMaterial;
+                _goalSpawner.DestroyGoal(other.transform);
                 SetReward(+1.0f);
                 EndEpisode();
-            }
-            else if (tag.Type == Tag.TagType.Border)
-            {
+                break;
+            case TagsNames.BorderTagName:
+                _floorMeshRenderer.material = _redMaterial;
+                transform.localPosition = Vector3.zero;
                 SetReward(-1.0f);
                 EndEpisode();
+                break;
+        }
+    }
+
+    private Transform GetClosestTransform(List<Transform> transforms)
+    {
+        var closestDistance = 999999.0f;
+        Transform closestTransform = null;
+
+        foreach (var entry in transforms)
+        {
+            var distance = Vector3.Distance(transform.position, entry.position);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestTransform = entry;
             }
+        }
+
+        return closestTransform;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+
+        if (Application.isPlaying)
+        {
+            Gizmos.DrawLine(transform.position, _targetTransform.position);
         }
     }
 }
