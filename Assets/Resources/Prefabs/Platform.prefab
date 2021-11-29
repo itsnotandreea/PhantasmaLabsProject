@@ -304,9 +304,6 @@ MonoBehaviour:
   MaxStep: 1000
   _moveSpeed: 20
   _goalSpawner: {fileID: 2198974831500390924}
-  _floorMeshRenderer: {fileID: 2198974830417490146}
-  _redMaterial: {fileID: 2100000, guid: d61c17e3e1d06db47a8f6975c5b1d213, type: 2}
-  _greenMaterial: {fileID: 2100000, guid: e2196407835e8854390490056c0b7741, type: 2}
 --- !u!114 &2198974830374891562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,7 +395,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2198974830384334858}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -493,7 +490,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2198974830400208120}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -688,7 +685,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2198974831120361287}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -815,7 +812,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2198974831488296805}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -908,7 +905,7 @@ MonoBehaviour:
   _goalPrefab: {fileID: 5735855765199282101, guid: b72edbde145cd4e4c9d6694536c1cc9f, type: 3}
   _goalsHolder: {fileID: 2198974831500390927}
   _randomGoalsToSpawn: {x: 1, y: 2}
-  _goalSpawningDimensions: {x: 90, y: 90}
+  _goalSpawningAreaDimensions: {x: 90, y: 90}
 --- !u!1 &2198974831793415523
 GameObject:
   m_ObjectHideFlags: 0

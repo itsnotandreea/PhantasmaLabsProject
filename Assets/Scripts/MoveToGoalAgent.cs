@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -6,21 +5,38 @@ using Unity.MLAgents.Sensors;
 
 public class MoveToGoalAgent : Agent
 {
+    #region Getters
+    
+    public Transform TargetTransform => _targetTransform;
+    
+    #endregion
+    
+    #region Fields
+    
     [SerializeField] private float _moveSpeed = 5.0f;
     [SerializeField] private GoalSpawner _goalSpawner = null;
-    [SerializeField] private MeshRenderer _floorMeshRenderer = null;
-    [SerializeField] private Material _redMaterial = null;
-    [SerializeField] private Material _greenMaterial = null;
+    
+    #endregion
+    
+    #region Private Properties
 
     private Transform _targetTransform;
+    
+    #endregion
+    
+    #region OnEpisodeBegin
     
     public override void OnEpisodeBegin()
     {
         if (!_goalSpawner.HasGoals)
             _goalSpawner.SpawnRandomNumberOfGoals();
         
-        _targetTransform = GetClosestTransform(_goalSpawner.InstantiatedGoals);
+        _targetTransform = _goalSpawner.GetClosestGoal(transform.position);
     }
+    
+    #endregion
+    
+    #region CollectObservations / OnActionReceived / Heuristic
 
     public override void CollectObservations(VectorSensor sensor)
     {
@@ -42,51 +58,41 @@ public class MoveToGoalAgent : Agent
         continuousActions[0] = Input.GetAxisRaw("Horizontal");
         continuousActions[1] = Input.GetAxisRaw("Vertical");
     }
+    
+    #endregion
 
+    #region OnTriggerEnter
+    
     private void OnTriggerEnter(Collider other)
     {
         switch (other.tag)
         {
             case TagsNames.GoalTagName:
-                _floorMeshRenderer.material = _greenMaterial;
                 _goalSpawner.DestroyGoal(other.transform);
                 SetReward(+1.0f);
                 EndEpisode();
                 break;
             case TagsNames.BorderTagName:
-                _floorMeshRenderer.material = _redMaterial;
                 transform.localPosition = Vector3.zero;
                 SetReward(-1.0f);
                 EndEpisode();
                 break;
         }
     }
-
-    private Transform GetClosestTransform(List<Transform> transforms)
-    {
-        var closestDistance = 999999.0f;
-        Transform closestTransform = null;
-
-        foreach (var entry in transforms)
-        {
-            var distance = Vector3.Distance(transform.position, entry.position);
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestTransform = entry;
-            }
-        }
-
-        return closestTransform;
-    }
+    
+    #endregion
+    
+    #region OnDrawGizmos
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue;
+        Gizmos.color = Color.magenta;
 
         if (Application.isPlaying)
         {
             Gizmos.DrawLine(transform.position, _targetTransform.position);
         }
     }
+    
+    #endregion
 }
